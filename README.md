@@ -1,6 +1,5 @@
 # firebase_and_local_notification
 A comprehensive Flutter project for integrating and managing Firebase Cloud Messaging (FCM) and local notifications. Features background message handling, interactive notification responses, and user-centric notification controls.
-<<<<<<< HEAD
 
 # Implementing Firebase and Local Notifications in Flutter
 Building a full-fledged Flutter application often requires the integration of notifications to enhance user engagement. This guide walks you through the implementation of both Firebase Cloud Messaging (FCM) for push notifications and local notifications within a Flutter application.
