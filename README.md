@@ -29,8 +29,14 @@ In your main Dart file, initialize Firebase as shown in the provided code snippe
 ```
 
 Future<void> main() async {
-  await FBaseConnect.firebaseInit();
+  await notificationSetup();
   runApp(const MyApp());
+}
+
+Future<void> notificationSetup() async {
+  await GlobalNotification.localNotificationInit();
+  FBaseConnect connect = FBaseConnect();
+  await connect.firebaseInit();
 }
 
 ```
@@ -83,6 +89,40 @@ Future<void> notificationTapBackground(
     NotificationResponse notificationResponse) async {
   // ... Handle notification tap
 }
+
+```
+#### UI and Stream Listeners
+Implement UI components and listeners to handle notification streams.
+
+```
+
+  @override
+  initState() {
+    configureDidReceiveLocalNotificationSubject();
+    configureSelectNotificationSubject();
+    super.initState();
+  }
+
+  void configureDidReceiveLocalNotificationSubject() {
+    didReceiveLocalNotificationStream.stream.listen(
+      (ReceivedNotification receivedNotification) async {
+        var jsonData = jsonDecode(receivedNotification.payload ?? "");
+        NotiPayloadParams notiPayloadParams =
+            NotiPayloadParams.fromMap(jsonData);
+        await ProcessNotification.via
+            .handlePushNotification(notiPayloadParams, context);
+      },
+    );
+  }
+
+  void configureSelectNotificationSubject() {
+    selectNotificationStream.stream.listen((String? payload) async {
+      var jsonData = jsonDecode(payload.toString());
+      NotiPayloadParams notiPayloadParams = NotiPayloadParams.fromMap(jsonData);
+      await ProcessNotification.via
+          .handlePushNotification(notiPayloadParams, context);
+    });
+  }
 
 ```
 
