@@ -1,5 +1,14 @@
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+NotiPayloadParams getNotiPayloadParams(RemoteMessage message) {
+  NotiPayloadParams model = notiPayloadParamsFromMap(
+    json.encode(message.data),
+  );
+  return model;
+}
+
 NotiPayloadParams notiPayloadParamsFromMap(String str) =>
     NotiPayloadParams.fromMap(json.decode(str));
 

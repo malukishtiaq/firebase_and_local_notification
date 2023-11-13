@@ -1,5 +1,5 @@
-class IncomingNotif {
-  IncomingNotif({
+class ReceivedNotification {
+  ReceivedNotification({
     required this.id,
     required this.title,
     required this.body,

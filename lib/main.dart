@@ -1,9 +1,10 @@
 import 'package:firebase_and_local_notification/my_home_page.dart';
 import 'package:flutter/material.dart';
-import 'notification/firebase_init.dart';
+import 'notification/firebase/f_base_connect.dart';
 
 Future<void> main() async {
-  await FBaseConnect.firebaseInit();
+  FBaseConnect connect = FBaseConnect();
+  await connect.firebaseInit();
   runApp(const MyApp());
 }
 

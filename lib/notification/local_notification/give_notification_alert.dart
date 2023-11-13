@@ -1,39 +1,59 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:firebase_and_local_notification/notification/local_notification/galobal_settings.dart';
+import 'package:firebase_and_local_notification/notification/models/noti_payload_params.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'galobal_notification.dart';
-import 'noti_payload_params.dart';
-import 'notification_actions.dart';
 
-int notifcationBadgeCounter = 0;
+class GiveNotificationAlert {
+  Future<void> showNotificationWithActionButtons(
+      NotiPayloadParams message) async {
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      notiifcationChannelIdForAndroid,
+      notiifcationChannelNameForAndroid,
+      channelDescription: 'Letsconnect123',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          viewAction,
+          'View',
+          showsUserInterface: true,
+          cancelNotification: false,
+          titleColor: Color.fromARGB(255, 255, 0, 0),
+          icon: DrawableResourceAndroidBitmap('secondary_icon'),
+        ),
+        AndroidNotificationAction(
+          closeAction,
+          'Close',
+          icon: DrawableResourceAndroidBitmap('secondary_icon'),
+        ),
+      ],
+    );
 
-class FgMsg {
-  static final FgMsg via = FgMsg._internal();
-  FgMsg._internal();
-  Future<void> handlePushNotification(NotiPayloadParams message,
-      {bool isAppLaunch = false, bool showBannerNotification = false}) async {
-    saveNotificationData(message);
-    if (showBannerNotification) {
-      await _showNotificationUpdateChannelDescription(message);
-    } else {
-      switch (message.screenName) {
-        case "Home":
-          NotificationActions.via.onHomeAction(message);
-          break;
-        case "Setting":
-          NotificationActions.via.onSettingAction(message);
-          break;
-      }
-    }
-    if (Platform.isAndroid) {
-      FlutterAppBadger.updateBadgeCount(notifcationBadgeCounter);
-    }
+    const DarwinNotificationDetails iosNotificationDetails =
+        DarwinNotificationDetails(
+      categoryIdentifier: darwinNotificationCategoryPlain,
+    );
+
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: iosNotificationDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      id++,
+      message.title.toString(),
+      message.message.toString(),
+      notificationDetails,
+      payload: jsonEncode(message.toMap()),
+    );
   }
 
-  Future<void> _showNotificationUpdateChannelDescription(
-      NotiPayloadParams message) async {
+  Future<void> showNotification(NotiPayloadParams message) async {
     try {
       AndroidNotificationDetails androidPlatformChannelSpecifics =
           const AndroidNotificationDetails(
@@ -67,12 +87,10 @@ class FgMsg {
           msg:
               'An error occurred while attempting to receive the notification');
     }
-    if ("if client asks for badge" == "just remove this if") {
-      updateBadgeCount(message);
-    }
+    _updateBadgeCount(message);
   }
 
-  void updateBadgeCount(NotiPayloadParams message) {
+  void _updateBadgeCount(NotiPayloadParams message) {
     String? badgeString = message.badge;
     int? badgeNumber;
 
@@ -87,14 +105,6 @@ class FgMsg {
     } else {
       FlutterAppBadger.updateBadgeCount(1);
       Fluttertoast.showToast(msg: 'Badge string is null or empty');
-    }
-  }
-
-  Future<void> saveNotificationData(NotiPayloadParams notificaiton) async {
-    try {
-      //you can save in local database or prefrencies if you want.
-    } catch (e) {
-      print("");
     }
   }
 }
