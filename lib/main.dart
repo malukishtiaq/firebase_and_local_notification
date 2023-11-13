@@ -1,11 +1,17 @@
 import 'package:firebase_and_local_notification/my_home_page.dart';
 import 'package:flutter/material.dart';
 import 'notification/firebase/f_base_connect.dart';
+import 'notification/local_notification/galobal_settings.dart';
 
 Future<void> main() async {
+  await notificationSetup();
+  runApp(const MyApp());
+}
+
+Future<void> notificationSetup() async {
+  await GlobalNotification.localNotificationInit();
   FBaseConnect connect = FBaseConnect();
   await connect.firebaseInit();
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
